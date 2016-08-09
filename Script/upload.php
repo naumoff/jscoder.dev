@@ -21,13 +21,15 @@ IF($_SERVER['REQUEST_METHOD']=='POST'){
 IF($loadStatus == 'FAILED'){
 	error($secretWordErr,$fileLoadErr);
 }else{
+	unlink($newFilePath);
 	move_uploaded_file($fileSource,$newFilePath);
 	if (file_exists($newFilePath)==TRUE){
 		echo "<pre>";
 		echo "<a href='../Tester/checker.php' target='_blank'>Check your script</a>"."\n";
 		echo "File downloaded sucessfully!"."\n";
+		echo "<a href='../Script/create.php' target='_blank'>Code your script</a>";
 	}else{
-		var_dump(is_uploaded_file($newFilePath));
+		echo "For some reasons file does not exist in specified folder";
 	}
 }
 
