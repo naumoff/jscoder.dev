@@ -1,1 +1,1 @@
-/*  this is comment one  */  var x = "Hello, ";       var y = "see our World!"; /* this is comment three  */     /* this is comment four   	comment continuation   	comment closing */   document.write(x,y);  
+/*ğãæ[A_8_4üXœÆĞG’¤Ã^bñÈÌèàB*/ var x = "Hello, ";  var y = "see our World!"; /*Aš Pé“³3{}¼¡½ä¶³;kÈb(à‘'Ç*/  /*§Âˆ‹ÕY¬ÕCi¸ÙpU¦¢Å+	J«ÓYEA‰z:Ê1SwñÍİ"ıg?ó"Ñ†½{@b0"`ÒÂl±*/ document.write(x,y);
