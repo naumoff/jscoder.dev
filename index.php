@@ -9,7 +9,7 @@
 	<form action="/Script/upload.php" method="post" enctype="multipart/form-data">
 		<fieldset>
 			<legend>JS file dowload form</legend>
-			<input type="text" name="secret_word"> Secret word<br>
+			<input type="text" name="secret_word" placeholder="numbers recommended"> Secret word<br>
 			<input type="file" name="js_load" accept="application/javascript"><br>
 			<input type="submit" name="upload_button" value = "upload">
 		</fieldset>

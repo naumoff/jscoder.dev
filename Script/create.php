@@ -21,7 +21,7 @@ writeToFile($str,$handleNew,$secretWord);
 
 /* functions to code existing JS */
 
-//function that transform comments
+//function that transform comments into one format - /* comment */
 function changeComments(&$string)
 {
 	$pattern = '/(\/\/)(.+)$/';
@@ -34,12 +34,13 @@ function changeComments(&$string)
 function writeToFile($str,$handleNew,$key)
 {
 	$code = implode(" ",$str);
-	$code = str_replace("\n"," ",$code);
-	$code = str_replace("\r"," ",$code);
+	$code = str_replace("\n","",$code);
+	$code = str_replace("\r","",$code);
 	$code = str_replace("}","};",$code);
 	if(preg_match('/\/\*[^\*\/]+\*\//',$code)==1){
 		$code = commentEncryptor($code,$key);
 	}
+	fakeFunctionsInsert($code);
 	print_r($code);
 	fwrite($handleNew,$code);
 }
@@ -54,19 +55,39 @@ function commentEncryptor($code,$key)
 	foreach ($matches[0] as $value)
 	{
 		$oldValue = $value;
-		// remove /* and */
+		// $oldValueClean has removed /* and */
 		$oldValueClean = preg_replace('/\/\*([^\*\/]+)\*\//','(\1)',$oldValue);
-		var_dump($oldValueClean);
 		$mc_d = mcrypt_module_open(MCRYPT_BLOWFISH,'',MCRYPT_MODE_CFB,'');
 		$iv_size = mcrypt_enc_get_iv_size($mc_d);
 		$iv = mcrypt_create_iv($iv_size,MCRYPT_RAND);
 		mcrypt_generic_init($mc_d,$key,$iv);
-		$newValue = mcrypt_generic($mc_d,$oldValue);
+		$newValue = mcrypt_generic($mc_d,$oldValueClean);
+		$newValue = base64_encode($iv.$newValue);
 		mcrypt_generic_deinit($mc_d);
 		$newValue = '/*'.$newValue.'*/';
 		$code = str_replace($oldValue,$newValue,$code);
 	}
 	return $code;
+}
+
+//function that inserts fake functions from external file
+// ../FakeData/JS-functions.php
+function fakeFunctionsInsert(&$code)
+{
+	include_once '../FakeData/JS-functions.php';
+
+	$count = count($fakeFunc)-1;
+	$quantity = rand(0,5);
+	
+	for ($x = 0; $x<$quantity; $x++){
+		$key = rand(0,$count);
+		$result[] = ($fakeFunc[$key]);
+	}
+	
+	$result = implode('',$result);
+	
+	$pattern = '/;/';
+	$code = preg_replace($pattern,"; {$result}",$code);
 }
 
 
