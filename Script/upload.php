@@ -30,6 +30,7 @@ IF($loadStatus == 'FAILED'){
 		echo "File downloaded sucessfully!"."\n";
 		echo "<a href='../Script/create.php' target='_blank'>Code your script</a>"."\n";
 		$_SESSION['secret_word'] = $_POST['secret_word'];
+		$_SESSION['function_encrypt'] = $_POST['function_encrypt'];
 	}else{
 		echo "For some reasons file does not exist in specified folder";
 	}

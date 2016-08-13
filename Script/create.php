@@ -1,6 +1,8 @@
 <?php
 session_start();
 $secretWord = $_SESSION['secret_word'];
+$funcEncryptStatus = $_SESSION['function_encrypt'];
+var_dump($funcEncryptStatus);
 $filePathOld = '../JS-old/js_old.js';
 $filePathNew = '../JS-new/js_new.js';
 $handleOld = fopen($filePathOld,'r');
@@ -9,15 +11,25 @@ $count = 0;
 WHILE($string = fgets($handleOld)){
 	$string = changeComments($string);
 	$string = trim($string);
+	// if string ends on ';' we insert fake functions
+	// random quantity of random functions
+	$pattern = '/;$/';
+	if (preg_match($pattern,$string) == 1){
+		fakeFunctionsInsert($string);
+		$instance += 1;
+		echo $instance;
+	}
 	$str[]=$string;
+	unset($string);
 	$count ++;
-	if ($count >=20){
-		writeToFile($str,$handleNew,$secretWord);
+	echo 'Written!';
+	if ($count >=100){
+		writeToFile($str,$handleNew,$secretWord,$funcEncryptStatus);
 		$count = 0;
-		$str = null;
+		unset($str);
 	}
 }
-writeToFile($str,$handleNew,$secretWord);
+writeToFile($str,$handleNew,$secretWord,$funcEncryptStatus);
 
 /* functions to code existing JS */
 
@@ -31,16 +43,16 @@ function changeComments(&$string)
 }
 
 // function that cut new lines and join everything into one line
-function writeToFile($str,$handleNew,$key)
+function writeToFile($str,$handleNew,$key,$funcEncryptStatus)
 {
 	$code = implode(" ",$str);
 	$code = str_replace("\n","",$code);
 	$code = str_replace("\r","",$code);
-	$code = str_replace("}","};",$code);
+	$code = preg_replace('/}/','};',$code);
 	if(preg_match('/\/\*[^\*\/]+\*\//',$code)==1){
 		$code = commentEncryptor($code,$key);
 	}
-	fakeFunctionsInsert($code);
+	functionEncrypt($code,$funcEncryptStatus);
 	print_r($code);
 	fwrite($handleNew,$code);
 }
@@ -72,24 +84,30 @@ function commentEncryptor($code,$key)
 
 //function that inserts fake functions from external file
 // ../FakeData/JS-functions.php
-function fakeFunctionsInsert(&$code)
+function fakeFunctionsInsert(&$string)
 {
-	include_once '../FakeData/JS-functions.php';
-
+	include '../FakeData/JS-functions.php';
 	$count = count($fakeFunc)-1;
-	$quantity = rand(0,5);
+	$quantity = rand(1,3);
 	
-	for ($x = 0; $x<$quantity; $x++){
-		$key = rand(0,$count);
-		$result[] = ($fakeFunc[$key]);
+	for ($x = 0; $x <=$quantity; $x++)
+	{
+		$key = rand(1,$count);
+		$string = $string . $fakeFunc[$key];
 	}
-	
-	$result = implode('',$result);
-	
-	$pattern = '/;/';
-	$code = preg_replace($pattern,"; {$result}",$code);
 }
 
+// function that encrypt function names
+function functionEncrypt($code,$funcEncryptStatus){
+	if($funcEncryptStatus == 1){
+		$pattern = '/function (?P<funcName>[a-z][a-zA-Z0-9-_]*)/';
+		preg_match_all($pattern,$code,$matches);
+		var_dump($matches['funcName']);
+		return $code;
+	} else {
+		return $code;
+	}
+}
 
 
 
