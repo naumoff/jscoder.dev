@@ -52,7 +52,7 @@ function writeToFile($str,$handleNew,$key,$funcEncryptStatus)
 	if(preg_match('/\/\*[^\*\/]+\*\//',$code)==1){
 		$code = commentEncryptor($code,$key);
 	}
-	functionEncrypt($code,$funcEncryptStatus);
+	$code = functionEncrypt($code,$funcEncryptStatus,$key);
 	print_r($code);
 	fwrite($handleNew,$code);
 }
@@ -82,7 +82,7 @@ function commentEncryptor($code,$key)
 	return $code;
 }
 
-//function that inserts fake functions from external file
+//function that inserts fake functions & variables from external file
 // ../FakeData/JS-functions.php
 function fakeFunctionsInsert(&$string)
 {
@@ -98,16 +98,46 @@ function fakeFunctionsInsert(&$string)
 }
 
 // function that encrypt function names
-function functionEncrypt($code,$funcEncryptStatus){
+function functionEncrypt($code,$funcEncryptStatus,$key)
+{
 	if($funcEncryptStatus == 1){
-		$pattern = '/function (?P<funcName>[a-z][a-zA-Z0-9-_]*)/';
+		$pattern = '/function (?P<funcName>[a-zA-Z0-9-_]*)/';
 		preg_match_all($pattern,$code,$matches);
-		var_dump($matches['funcName']);
+		$matches = array_unique($matches['funcName']);
+		$matches = array_values($matches);
+		$count = count($matches)-1;
+		for($cycle = 0; $cycle<=$count; $cycle++)
+		{
+			$funcName = $matches[$cycle];
+			var_dump($funcName);
+			// checks that function name has no variable namesake
+			$pattern = "/(var $funcName|$funcName=|$funcName =)/";
+			if(preg_match_all($pattern,$code) == 0){
+				$newValue = encryptor($funcName,$key);
+				var_dump($newValue);
+			}else{
+				$newValue = $funcName;
+				var_dump($newValue);
+			}
+			$code = str_replace($funcName,$newValue,$code);
+		}
+		
 		return $code;
 	} else {
 		return $code;
 	}
 }
 
+function encryptor($text,$key)
+{
+	$mc_d = mcrypt_module_open(MCRYPT_BLOWFISH,'',MCRYPT_MODE_CFB,'');
+	$iv_size = mcrypt_enc_get_iv_size($mc_d);
+	$iv = mcrypt_create_iv($iv_size,MCRYPT_RAND);
+	mcrypt_generic_init($mc_d,$key,$iv);
+	$newValue = mcrypt_generic($mc_d,$text);
+	$newValue = base64_encode($iv.$newValue);
+	mcrypt_generic_deinit($mc_d);
+	return $newValue;
+}
 
 

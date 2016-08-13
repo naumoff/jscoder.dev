@@ -8,8 +8,8 @@ $fakeFunc = [
 	' var domStatusFound = true; ',
 	' var diskDoctrine = \'CONST\'; ',
 	' var metRouteDone = 0; ',
-	' var routeDefaultParams = true; ',
-	' function cancellBestMatchDom(){return false;} ',
-	' function robotCalcMeasure(){var bestMatchRec = 0; return bestMatchRec;} ',
-	' var CalibrateDomMinimum = NULL; '
+//	' var routeDefaultParams = true; ',
+//	' function cancellBestMatchDom(){return false;} ',
+//	' function robotCalcMeasure(){var bestMatchRec = 0; return bestMatchRec;} ',
+//	' var calibrateDomMinimum = NULL; '
 ];
