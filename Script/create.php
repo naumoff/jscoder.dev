@@ -128,16 +128,67 @@ function functionEncrypt($code,$funcEncryptStatus,$key)
 	}
 }
 
+// function that encryt total name of function (prefix + functionName + suffix)
 function encryptor($text,$key)
 {
-	$mc_d = mcrypt_module_open(MCRYPT_BLOWFISH,'',MCRYPT_MODE_CFB,'');
-	$iv_size = mcrypt_enc_get_iv_size($mc_d);
-	$iv = mcrypt_create_iv($iv_size,MCRYPT_RAND);
-	mcrypt_generic_init($mc_d,$key,$iv);
-	$newValue = mcrypt_generic($mc_d,$text);
-	$newValue = base64_encode($iv.$newValue);
-	mcrypt_generic_deinit($mc_d);
+	$fix = str_split($key);
+	
+	foreach ($fix as $value)
+	{
+		$preFix[] = prefixName($value);
+	}
+	$prefix = 'func'.implode('',$preFix);
+	
+	foreach ($fix as $value)
+	{
+		$sufFix[] = suffixName($value);
+	}
+	$suffix = strrev(implode('',$sufFix));
+	
+	$text = str_split($text);
+	foreach ($text as $value)
+	{
+		$newValue[] = coderName($value);
+	}
+	$newValue = $prefix.implode('',$newValue).$suffix;
 	return $newValue;
 }
 
+// Function encrypt function name based on file ../FakeData/LetterDescriptor
+function coderName($value)
+{
+	include '../FakeData/LetterDescriptor.php';
+	foreach ($descriptor as $key=>$oldValue)
+	{
+		if($value == $oldValue){
+			$value = $key;
+		}
+	}
+	return $value;
+}
 
+// function encypt prefix based on $key provided by User
+function prefixName($value)
+{
+	include '../FakeData/LetterDescriptor.php';
+	foreach ($prefixDescriptor as $key=>$oldValue)
+	{
+		if($value == $oldValue){
+			$value = $key;
+		}
+	}
+	return $value;
+}
+
+// function encrypt suffix using $key provided by User
+function suffixName($value)
+{
+	include '../FakeData/LetterDescriptor.php';
+	foreach ($suffixDescriptor as $key=>$oldValue)
+	{
+		if($value == $oldValue){
+			$value = $key;
+		}
+	}
+	return $value;
+}

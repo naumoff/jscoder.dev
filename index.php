@@ -9,7 +9,7 @@
 	<form action="/Script/upload.php" method="post" enctype="multipart/form-data">
 		<fieldset>
 			<legend>JS file dowload form</legend>
-			<input type="text" name="secret_word" placeholder="your personal key"> Encryption key<br>
+			<input type="text" name="secret_word" placeholder="letters and numbers only"> Encryption key<br>
 			<input type="file" name="js_load" accept="application/javascript"><br>
 			<input type="radio" name="function_encrypt" value="1" checked="checked">Encrypt functions<br>
 			<input type="radio" name="function_encrypt" value="0">Do not encrypt functions <br>
