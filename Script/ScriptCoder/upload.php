@@ -5,7 +5,7 @@ session_start();
 $fileSize = $_FILES['js_load']['size'];
 $fileExt = $_FILES['js_load']['type'];
 $fileSource = $_FILES['js_load']['tmp_name'];
-$newFilePath = '../JS-old/js_old.js';
+$newFilePath = '../../Data/JS-old/js_old.js';
 $secretWordPattern = '/[a-z]+/i';
 
 $loadStatus = NULL;
@@ -27,7 +27,7 @@ IF($loadStatus == 'FAILED'){
 	if (file_exists($newFilePath)==TRUE){
 		echo "<pre>";
 		echo "<h2>File downloaded sucessfully!</h2>"."\n";
-		echo "<a href='../Script/create.php' target='_blank'>Start Obfuscation!</a>"."\n";
+		echo "<a href='../ScriptCoder/create.php' target='_blank'>Start Obfuscation!</a>" ."\n";
 		$_SESSION['secret_word'] = $_POST['secret_word'];
 		$_SESSION['function_encrypt'] = $_POST['function_encrypt'];
 		$_SESSION['variable_encrypt'] = $_POST['variable_encrypt'];

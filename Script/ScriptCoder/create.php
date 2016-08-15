@@ -5,8 +5,8 @@ $funcEncryptStatus = $_SESSION['function_encrypt'];
 $varEncryptStatus = $_SESSION['variable_encrypt'];
 $fakeGeneratorStatus = $_SESSION['fake_data'];
 
-$filePathOld = '../JS-old/js_old.js';
-$filePathNew = '../JS-new/js_new.js';
+$filePathOld = '../../Data/JS-old/js_old.js';
+$filePathNew = '../../Data/JS-new/js_new.js';
 $handleOld = fopen($filePathOld,'r');
 $handleNew = fopen($filePathNew,'w+');
 $count = 0;
@@ -33,7 +33,7 @@ WHILE($string = fgets($handleOld)){
 }
 writeToFile($str,$handleNew,$secretWord,$funcEncryptStatus,$varEncryptStatus);
 $_SESSION['complete'] = 1;
-header('Location: ../index.php');
+header('Location: ../../index.php');
 exit;
 
 /* functions to code existing JS */
@@ -86,10 +86,10 @@ function commentEncryptor($code,$key)
 }
 
 //function that inserts fake functions & variables from external file
-// ../FakeData/JS-functions.php
+// ../Encryptors/JS-functions.php
 function fakeFunctionsInsert(&$string)
 {
-	include '../FakeData/JS-functions.php';
+	include '../../Encryptors/JS-functions.php';
 	$count = count($fakeFunc)-1;
 	$quantity = rand(1,3);
 	
@@ -153,10 +153,10 @@ function encryptorFunc($text,$key)
 	return $newValue;
 }
 
-// Function encrypt function and variable name based on file ../FakeData/LetterDescriptor
+// Function encrypt function and variable name based on file ../Encryptors/LetterDescriptor
 function coderName($value)
 {
-	include '../FakeData/LetterDescriptor.php';
+	include '../../Encryptors/LetterDescriptor.php';
 	foreach ($descriptor as $key=>$oldValue)
 	{
 		if($value == $oldValue){
@@ -169,7 +169,7 @@ function coderName($value)
 // function encypt prefix based on $key provided by User
 function prefixName($value)
 {
-	include '../FakeData/LetterDescriptor.php';
+	include '../../Encryptors/LetterDescriptor.php';
 	foreach ($prefixDescriptor as $key=>$oldValue)
 	{
 		if($value == $oldValue){
@@ -182,7 +182,7 @@ function prefixName($value)
 // function encrypt suffix using $key provided by User
 function suffixName($value)
 {
-	include '../FakeData/LetterDescriptor.php';
+	include '../../Encryptors/LetterDescriptor.php';
 	foreach ($suffixDescriptor as $key=>$oldValue)
 	{
 		if($value == $oldValue){
@@ -245,7 +245,7 @@ function encryptorVar($text,$key)
 // function that replaces old variable name with new one
 function variableReplacer($oldVar,$newVar,$code)
 {
-	include '../FakeData/VarPattern.php';
+	include '../../Encryptors/VarPattern.php';
 	foreach ($varReplacer as $key => $value){
 		$code = preg_replace($key, $value, $code);
 	}

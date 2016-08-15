@@ -6,8 +6,8 @@
 </head>
 <body>
 <h1>Old Script</h1>
-<script src="../JS-old/js_old.js"></script>
+<script src="../Data/JS-old/js_old.js"></script>
 <h1>New Script</h1>
-<script src="../JS-new/js_new.js"></script>
+<script src="../Data/JS-new/js_new.js"></script>
 </body>
 </html>

@@ -1,6 +1,6 @@
 <pre>
 <?php
-include_once '../FakeData/JS-functions.php';
+include_once '../Encryptors/JS-functions.php';
 $count = count($fakeFunc)-1;
 $quantity = rand(0,5);
 

@@ -7,7 +7,7 @@
 	<title>JS obfuscation</title>
 </head>
 <body>
-	<form action="/Script/upload.php" method="post" enctype="multipart/form-data">
+	<form action="/Script/ScriptCoder/upload.php" method="post" enctype="multipart/form-data">
 		<fieldset>
 			<legend>JS coder form</legend>
 			<input type="text" name="secret_word" placeholder="letters and numbers only"> Encryption key<br>
@@ -24,13 +24,13 @@
 	<b><?php echo $code ?></b>
 	<?php
 	if($status == 1){
-		$file = 'JS-new/js_new.js';
+		$file = 'Data/JS-new/js_new.js';
 		$handle = fopen($file,'r');
 		$code = fread($handle,filesize($file));
 		echo "<h2>Your secret word is:</h2>";
 		print_r($_SESSION['secret_word']);
 		echo "<h2>Your link to download code is:</h2>";
-		echo "<a href='JS-new/js_new.js' target='_blank'>Download modified JS file</a>";
+		echo "<a href='Data/JS-new/js_new.js' target='_blank'>Download modified JS file</a>";
 		echo "<h2>Your link to test code is:</h2>";
 		echo "<a href='Tester/checker.php' target='_blank'>Check your script</a>";
 		echo "<h2>Your code is:</h2>";
@@ -38,7 +38,7 @@
 	}
 	?>
 <?php if($status !=1) :?>
-	<form action="/Decoder/upload.php" method="post" enctype="multipart/form-data">
+	<form action="/Script/ScriptDecoder/upload.php" method="post" enctype="multipart/form-data">
 		<fieldset>
 			<legend>JS decoder form</legend>
 			<input type="text" name="secret_word" placeholder="letters and numbers only"> Encryption key<br>

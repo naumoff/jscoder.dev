@@ -14,7 +14,7 @@ print_r($newValue);
 
 function coderName($value)
 {
-	include '../FakeData/LetterDescriptor.php';
+	include '../Encryptors/LetterDescriptor.php';
 	foreach ($descriptor as $key=>$oldValue)
 	{
 		if($value == $oldValue){
