@@ -27,10 +27,15 @@
 	<b><?php echo $code ?></b>
 	<?php
 	if($status == 1){
-		$file = '../JS-new/js_new.js';
+		$file = 'JS-new/js_new.js';
 		$handle = fopen($file,'r');
 		$code = fread($handle,filesize($file));
-		var_dump($code);
+		echo "<h2>Your secret word is:</h2>";
+		print_r($_SESSION['secret_word']);
+		echo "<h2>Your link to download code is:</h2>";
+		echo "<a href='JS-new/js_new.js' target='_blank'>Download modified JS file</a>";
+		echo "<h2>Your code is:</h2>";
+		print_r($code);
 	}
 	?>
 </body>
