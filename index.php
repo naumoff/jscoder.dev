@@ -9,15 +9,12 @@
 <body>
 	<form action="/Script/upload.php" method="post" enctype="multipart/form-data">
 		<fieldset>
-			<legend>JS file dowload form</legend>
+			<legend>JS coder form</legend>
 			<input type="text" name="secret_word" placeholder="letters and numbers only"> Encryption key<br>
 			<input type="file" name="js_load" accept="application/javascript"><br>
-			<input type="radio" name="function_encrypt" value="1" checked="checked">Encrypt functions<br>
-			<input type="radio" name="function_encrypt" value="0">Do not encrypt functions <br>
-			<textarea name="func_exceptions" cols="50" rows="5" placeholder="function names separated by comma that has to be skipped during encrypting process. Leave this field blank if you chosen 'Do not encrypt functions' option."></textarea><br>
-			<input type="radio" name="variable_encrypt" value="1" checked="checked">Encrypt variables<br>
-			<input type="radio" name="variable_encrypt" value="0">Do not encrypt variables<br>
-			<textarea name="var_exceptions" cols="50" rows="5" placeholder="variable names separated by comma that has to be skipped during encrypting process. Leave this field blank if you chosen 'Do not encrypt variables' option."></textarea><br>
+			<input type="checkbox" name="function_encrypt" value="1" checked="checked">Encrypt functions<br>
+			<input type="checkbox" name="variable_encrypt" value="1" checked="checked">Encrypt variables<br>
+			<input type="checkbox" name="fake_data" value="1" checked="checked">Insert fake data<br>
 			<input type="submit" name="upload_button" value = "upload">
 		</fieldset>
 	</form>
@@ -34,10 +31,25 @@
 		print_r($_SESSION['secret_word']);
 		echo "<h2>Your link to download code is:</h2>";
 		echo "<a href='JS-new/js_new.js' target='_blank'>Download modified JS file</a>";
+		echo "<h2>Your link to test code is:</h2>";
+		echo "<a href='Tester/checker.php' target='_blank'>Check your script</a>";
 		echo "<h2>Your code is:</h2>";
 		print_r($code);
 	}
 	?>
+<?php if($status !=1) :?>
+	<form action="/Decoder/upload.php" method="post" enctype="multipart/form-data">
+		<fieldset>
+			<legend>JS decoder form</legend>
+			<input type="text" name="secret_word" placeholder="letters and numbers only"> Encryption key<br>
+			<input type="file" name="js_load" accept="application/javascript"><br>
+			<input type="checkbox" name="function_encrypt" value="1" checked="checked">Functions were encrypted<br>
+			<input type="checkbox" name="variable_encrypt" value="1" checked="checked">Variables were encrypted<br>
+			<input type="checkbox" name="fake_data" value="1" checked="checked">Fake data was inserted<br>
+			<input type="submit" name="upload_button" value = "upload">
+		</fieldset>
+	</form>
+<?php endif; ?>
 </body>
 </html>
 <?php

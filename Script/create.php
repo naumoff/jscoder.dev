@@ -3,6 +3,8 @@ session_start();
 $secretWord = $_SESSION['secret_word'];
 $funcEncryptStatus = $_SESSION['function_encrypt'];
 $varEncryptStatus = $_SESSION['variable_encrypt'];
+$fakeGeneratorStatus = $_SESSION['fake_data'];
+
 $filePathOld = '../JS-old/js_old.js';
 $filePathNew = '../JS-new/js_new.js';
 $handleOld = fopen($filePathOld,'r');
@@ -11,12 +13,14 @@ $count = 0;
 WHILE($string = fgets($handleOld)){
 	$string = changeComments($string);
 	$string = trim($string);
-	// if string ends on ';' we insert fake functions
-	// random quantity of random functions and variables
-	$pattern = '/;$/';
-	if (preg_match($pattern,$string) == 1){
-		fakeFunctionsInsert($string);
-		$instance += 1;
+	if($fakeGeneratorStatus == 1){
+		// if string ends on ';' we insert fake data
+		// random quantity of random functions and variables
+		$pattern = '/;$/';
+		if (preg_match($pattern,$string) == 1){
+			fakeFunctionsInsert($string);
+//			$instance += 1;
+		}
 	}
 	$str[]=$string;
 	unset($string);
