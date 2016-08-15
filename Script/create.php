@@ -2,7 +2,7 @@
 session_start();
 $secretWord = $_SESSION['secret_word'];
 $funcEncryptStatus = $_SESSION['function_encrypt'];
-var_dump($funcEncryptStatus);
+$varEncryptStatus = $_SESSION['variable_encrypt'];
 $filePathOld = '../JS-old/js_old.js';
 $filePathNew = '../JS-new/js_new.js';
 $handleOld = fopen($filePathOld,'r');
@@ -12,24 +12,25 @@ WHILE($string = fgets($handleOld)){
 	$string = changeComments($string);
 	$string = trim($string);
 	// if string ends on ';' we insert fake functions
-	// random quantity of random functions
+	// random quantity of random functions and variables
 	$pattern = '/;$/';
 	if (preg_match($pattern,$string) == 1){
 		fakeFunctionsInsert($string);
 		$instance += 1;
-		echo $instance;
 	}
 	$str[]=$string;
 	unset($string);
 	$count ++;
-	echo 'Written!';
 	if ($count >=100){
-		writeToFile($str,$handleNew,$secretWord,$funcEncryptStatus);
+		writeToFile($str,$handleNew,$secretWord,$funcEncryptStatus,$varEncryptStatus);
 		$count = 0;
 		unset($str);
 	}
 }
-writeToFile($str,$handleNew,$secretWord,$funcEncryptStatus);
+writeToFile($str,$handleNew,$secretWord,$funcEncryptStatus,$varEncryptStatus);
+$_SESSION['complete'] = 1;
+header('Location: ../index.php');
+exit;
 
 /* functions to code existing JS */
 
@@ -43,7 +44,7 @@ function changeComments(&$string)
 }
 
 // function that cut new lines and join everything into one line
-function writeToFile($str,$handleNew,$key,$funcEncryptStatus)
+function writeToFile($str,$handleNew,$key,$funcEncryptStatus,$varEncryptStatus)
 {
 	$code = implode(" ",$str);
 	$code = str_replace("\n","",$code);
@@ -53,17 +54,15 @@ function writeToFile($str,$handleNew,$key,$funcEncryptStatus)
 		$code = commentEncryptor($code,$key);
 	}
 	$code = functionEncrypt($code,$funcEncryptStatus,$key);
-	print_r($code);
+	$code = variableEncrypt($code,$varEncryptStatus, $key);
 	fwrite($handleNew,$code);
 }
 
 //function that encrypt comments
 function commentEncryptor($code,$key)
 {
-	echo "<pre>";
 	$pattern = '/\/\*[^\*\/]+\*\//';
 	preg_match_all($pattern,$code,$matches);
-	var_dump($matches);
 	foreach ($matches[0] as $value)
 	{
 		$oldValue = $value;
@@ -109,19 +108,15 @@ function functionEncrypt($code,$funcEncryptStatus,$key)
 		for($cycle = 0; $cycle<=$count; $cycle++)
 		{
 			$funcName = $matches[$cycle];
-			var_dump($funcName);
 			// checks that function name has no variable namesake
 			$pattern = "/(var $funcName|$funcName=|$funcName =)/";
 			if(preg_match_all($pattern,$code) == 0){
-				$newValue = encryptor($funcName,$key);
-				var_dump($newValue);
+				$newValue = encryptorFunc($funcName,$key);
 			}else{
 				$newValue = $funcName;
-				var_dump($newValue);
 			}
 			$code = str_replace($funcName,$newValue,$code);
 		}
-		
 		return $code;
 	} else {
 		return $code;
@@ -129,7 +124,7 @@ function functionEncrypt($code,$funcEncryptStatus,$key)
 }
 
 // function that encryt total name of function (prefix + functionName + suffix)
-function encryptor($text,$key)
+function encryptorFunc($text,$key)
 {
 	$fix = str_split($key);
 	
@@ -154,7 +149,7 @@ function encryptor($text,$key)
 	return $newValue;
 }
 
-// Function encrypt function name based on file ../FakeData/LetterDescriptor
+// Function encrypt function and variable name based on file ../FakeData/LetterDescriptor
 function coderName($value)
 {
 	include '../FakeData/LetterDescriptor.php';
@@ -191,4 +186,64 @@ function suffixName($value)
 		}
 	}
 	return $value;
+}
+
+function VariableEncrypt($code,$varEncryptStatus, $key)
+{
+	if($varEncryptStatus == 1){
+		$pattern = '/var (?P<variable>[a-zA-Z0-9]+)/';
+		preg_match_all($pattern,$code,$matches);
+		$matches = array_unique($matches['variable']);
+		$matches = array_values($matches);
+		$count = count($matches)-1;
+		for($keyCount = 0; $keyCount<=$count; $keyCount++)
+		{
+			//check for function namesakes
+			$patternValue = $matches[$keyCount];
+			$pattern = "/function[ ]+$patternValue/";
+			if(preg_match_all($pattern,$code)==0){
+				$newVarValue = encryptorVar($patternValue,$key);
+				$code = variableReplacer($patternValue,$newVarValue,$code);
+			}
+		}
+		return $code;
+	} else {
+		return $code;
+	}
+}
+
+// function that encryt total name of variable (prefix + variableName + suffix)
+function encryptorVar($text,$key)
+{
+	$fix = str_split($key);
+	
+	foreach ($fix as $value)
+	{
+		$preFix[] = suffixName($value);
+	}
+	$prefix = 'vardom'.implode('',$preFix);
+	
+	foreach ($fix as $value)
+	{
+		$sufFix[] = prefixName($value);
+	}
+	$suffix = strrev(implode('',$sufFix));
+	
+	$text = str_split($text);
+	foreach ($text as $value)
+	{
+		$newValue[] = coderName($value);
+	}
+	$newValue = $prefix.implode('',$newValue).$suffix;
+	return $newValue;
+}
+
+// function that replaces old variable name with new one
+function variableReplacer($oldVar,$newVar,$code)
+{
+	include '../FakeData/VarPattern.php';
+	foreach ($varReplacer as $key => $value){
+		$code = preg_replace($key, $value, $code);
+	}
+	return $code;
 }

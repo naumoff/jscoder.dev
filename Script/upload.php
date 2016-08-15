@@ -31,6 +31,7 @@ IF($loadStatus == 'FAILED'){
 		echo "<a href='../Script/create.php' target='_blank'>Code your script</a>"."\n";
 		$_SESSION['secret_word'] = $_POST['secret_word'];
 		$_SESSION['function_encrypt'] = $_POST['function_encrypt'];
+		$_SESSION['variable_encrypt'] = $_POST['variable_encrypt'];
 	}else{
 		echo "For some reasons file does not exist in specified folder";
 	}
@@ -47,5 +48,4 @@ function error($secretWordErr,$fileLoadErr)
 
 //print_r($_FILES);
 print_r($_POST);
-//print_r($_SERVER['REQUEST_METHOD']);
 echo "</pre>";

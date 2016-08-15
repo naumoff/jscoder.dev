@@ -1,4 +1,3 @@
-<pre>
 <?php
 $descriptor = [
 	'A'=>'g',
