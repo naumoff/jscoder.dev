@@ -26,11 +26,12 @@ IF($loadStatus == 'FAILED'){
 	if (file_exists($newFilePath)==TRUE){
 		echo "<pre>";
 		echo "<h2>File downloaded sucessfully!</h2>"."\n";
-		echo "<a href='../../Script/ScriptDecoder/code.php' target='_blank'>Start Obfuscation!</a>" ."\n";
+		echo "<a href='../../Script/ScriptDecoder/decode.php' target='_blank'>Start Obfuscation!</a>" ."\n";
 		$_SESSION['secret_word'] = $_POST['secret_word'];
 		$_SESSION['function_encrypt'] = $_POST['function_encrypt'];
 		$_SESSION['variable_encrypt'] = $_POST['variable_encrypt'];
 		$_SESSION['fake_data'] = $_POST['fake_data'];
+		$_SESSION['newFilePath'] = $newFilePath;
 	}else{
 		echo "For some reasons file does not exist in specified folder";
 	}
