@@ -1,5 +1,7 @@
 <?php session_start() ?>
 <?php $status = $_SESSION['complete'];?>
+<?php echo "status now is ".$status; ?>
+
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -7,6 +9,7 @@
 	<title>JS obfuscation</title>
 </head>
 <body>
+<?php if($status == null || $status == 1): ?>
 	<form action="/Script/ScriptCoder/upload.php" method="post" enctype="multipart/form-data">
 		<fieldset>
 			<legend>JS coder form</legend>
@@ -22,8 +25,9 @@
 	<b><?php echo $_SESSION['WordErr']; ?></b>
 	<b><?php echo $_SESSION['LoadErr']; ?></b>
 	<b><?php echo $code ?></b>
-	<?php
-	if($status == 1){
+<?php endif; ?>
+
+<?php if($status == 1){
 		$file = 'Data/JS-new/js_new.js';
 		$handle = fopen($file,'r');
 		$code = fread($handle,filesize($file));
@@ -32,12 +36,12 @@
 		echo "<h2>Your link to download code is:</h2>";
 		echo "<a href='Data/JS-new/js_new.js' target='_blank'>Download modified JS file</a>";
 		echo "<h2>Your link to test code is:</h2>";
-		echo "<a href='Tester/checker.php' target='_blank'>Check your script</a>";
+		echo "<a href='Tester/checkerForCoded.php' target='_blank'>Check your script</a>";
 		echo "<h2>Your code is:</h2>";
 		print_r($code);
 	}
-	?>
-<?php if($status !=1) :?>
+?>
+<?php if($status == NULL || $status ==2) :?>
 	<form action="/Script/ScriptDecoder/upload.php" method="post" enctype="multipart/form-data">
 		<fieldset>
 			<legend>JS decoder form</legend>
@@ -50,6 +54,22 @@
 		</fieldset>
 	</form>
 <?php endif; ?>
+
+<?php if($status == 2){
+	$file = 'Data/JS-decoded/js_decoded.js';
+	$handle = fopen($file,'r');
+	$code = fread($handle,filesize($file));
+	echo "<h2>Your secret word is:</h2>";
+	print_r($_SESSION['secret_word']);
+	echo "<h2>Your link to download code is:</h2>";
+	echo "<a href='Data/JS-decoded/js_decoded.js' target='_blank'>Download decoded JS file</a>";
+	echo "<h2>Your link to test code is:</h2>";
+	echo "<a href='Tester/checkerForCoded.php' target='_blank'>Check your script</a>";
+	echo "<h2>Your code is:</h2>";
+	print_r($code);
+}
+?>
+
 </body>
 </html>
 <?php

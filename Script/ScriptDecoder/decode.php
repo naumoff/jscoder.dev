@@ -5,21 +5,14 @@ $funcEncryptStatus = $_SESSION['function_encrypt'];
 $varEncryptStatus = $_SESSION['variable_encrypt'];
 $fakeInsertStatus = $_SESSION['fake_data'];
 $newFilePath = $_SESSION['newFilePath'];
-?>
-<pre>
-<?php
-print_r($_SESSION);
 
 // open downloaded decoded file and assign its content to $code string variable
 $handle = fopen($newFilePath,'r');
 $code = fread($handle,filesize($newFilePath));
-var_dump($code);
-echo "<hr>";
 
 //decoding comments part
 $pattern = '/\/\*.+?\*\//';
 preg_match_all($pattern,$code,$matches);
-//var_dump($matches);
 $oldValue = $matches[0];
 $count = count($oldValue)-1;
 $cycle = 0;
@@ -27,36 +20,29 @@ for($cycle = 0; $cycle<=$count; $cycle++) {
 	$newValue[$cycle] = commentDecoder($oldValue[$cycle], $secretWord);
 	$code = str_replace($oldValue[$cycle],$newValue[$cycle],$code);
 }
-var_dump($code);
-echo "<hr>";
 
 // decoding function names
 if($funcEncryptStatus == 1){
 	//retrieved coded prefix of funcName
 	$mode = 1; // this mode ads 'func' word before prefix
 	$prefix = prefixDecoder($secretWord,$mode);
-	print_r($prefix."\n");
 	
 	//retrieved coded suffix of funcName
 	$suffix = suffixDecoder($secretWord);
-	print_r($suffix."\n");
 	
 	//retrieved coded core name of funcName
 	$pattern = "/$prefix(?P<funcName>.+?)$suffix/";
 	preg_match_all($pattern,$code,$matches);
 	$oldCoreFuncName = array_unique($matches['funcName']);
-	print_r($oldCoreFuncName);
 	
 	//retrieved array codedFullFuncName=>codedCoreFuncName
 	foreach ($oldCoreFuncName as $key=>$value)
 	{
 		$oldFuncName[$prefix.$oldCoreFuncName[$key].$suffix] = $oldCoreFuncName[$key];
 	}
-	print_r($oldFuncName);
 	
 	//retrieved array codedFullFuncName=>decodedCoreFuncName
 	$decodedFuncNameArray = Decoder($oldFuncName);
-	print_r($decodedFuncNameArray);
 	
 	//replaced in $code old coded funcNames to decoded funcNames
 	foreach($decodedFuncNameArray as $key=>$value)
@@ -69,27 +55,22 @@ if($funcEncryptStatus == 1){
 if($varEncryptStatus ==1){
 	//to avoid duplicate code suffixDecoder used for variable prefixes
 	$prefixVar = 'vardom'.strrev(suffixDecoder($secretWord));
-	print_r($prefixVar."\n");
 	
 	//to avoid duplicate code prefixDecoder used for variable suffixes
 	$mode = 0; // this mode abolishes 'func' word adding and does strrev()
 	$suffixVar = prefixDecoder($secretWord,$mode);
-	print_r($suffixVar."\n");
 	
 	//created array fullCodedVariableName=>coreCodedVariableName
 	$pattern = "/{$prefixVar}(?P<varCore>.+?){$suffixVar}/";
 	preg_match_all($pattern,$code,$matches);
 	$matches = array_unique($matches['varCore']);
-	print_r($matches);
 	foreach ($matches as $value)
 	{
 		$codedVarArray[$prefixVar.$value.$suffixVar] = $value;
 	}
-	print_r($codedVarArray);
 	
 	//create array fullCodedVariableName=>coreDecodedVariableName
 	$decodedVariableNameArray = Decoder($codedVarArray);
-	print_r($decodedVariableNameArray);
 	
 	//replaced old coded variable names with decoded names
 	foreach ($decodedVariableNameArray as $key=>$value)
@@ -231,11 +212,7 @@ function fakeDataRemoval($code)
 	include '../../Encryptors/JS-functions.php';
 	foreach ($fakeFunc as $value)
 	{
-		print_r($value."\n");
 		$code = str_replace($value,'',$code);
 	}
 	return $code;
 }
-
-?>
-</pre>
