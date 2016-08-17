@@ -19,7 +19,6 @@ WHILE($string = fgets($handleOld)){
 		$pattern = '/;$/';
 		if (preg_match($pattern,$string) == 1){
 			fakeFunctionsInsert($string);
-//			$instance += 1;
 		}
 	}
 	$str[]=$string;
@@ -143,7 +142,6 @@ function encryptorFunc($text,$key)
 		$sufFix[] = suffixName($value);
 	}
 	$suffix = strrev(implode('',$sufFix));
-	
 	$text = str_split($text);
 	foreach ($text as $value)
 	{
@@ -159,11 +157,11 @@ function coderName($value)
 	include '../../Encryptors/LetterDescriptor.php';
 	foreach ($descriptor as $key=>$oldValue)
 	{
-		if($value == $oldValue){
-			$value = $key;
+		if($value === $oldValue){
+			$newValue = $key;
 		}
 	}
-	return $value;
+	return $newValue;
 }
 
 // function encypt prefix based on $key provided by User

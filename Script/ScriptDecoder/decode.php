@@ -14,29 +14,31 @@ print_r($_SESSION);
 $handle = fopen($newFilePath,'r');
 $code = fread($handle,filesize($newFilePath));
 var_dump($code);
+echo "<hr>";
 
 //decoding comments part
 $pattern = '/\/\*.+?\*\//';
 preg_match_all($pattern,$code,$matches);
-var_dump($matches);
+//var_dump($matches);
 $oldValue = $matches[0];
 $count = count($oldValue)-1;
 $cycle = 0;
-
 for($cycle = 0; $cycle<=$count; $cycle++) {
 	$newValue[$cycle] = commentDecoder($oldValue[$cycle], $secretWord);
 	$code = str_replace($oldValue[$cycle],$newValue[$cycle],$code);
 }
+var_dump($code);
+echo "<hr>";
 
 // decoding function names
 if($funcEncryptStatus == 1){
 	//retrieved coded prefix of funcName
 	$prefix = prefixDecoder($secretWord);
-	print_r($prefix);
+	print_r($prefix."\n");
 	
 	//retrieved coded suffix of funcName
 	$suffix = suffixDecoder($secretWord);
-	print_r($suffix);
+	print_r($suffix."\n");
 	
 	//retrieved coded core name of funcName
 	$pattern = "/$prefix(?P<funcName>.+?)$suffix/";
@@ -53,10 +55,22 @@ if($funcEncryptStatus == 1){
 	
 	//retrieved array codedFullFuncName=>decodedCoreFuncName
 	$decodedFuncNameArray = functionDecoder($oldFuncName);
-
+	print_r($decodedFuncNameArray);
+	
+	//replaced in $code old coded funcNames to decoded funcNames
+	foreach($decodedFuncNameArray as $key=>$value)
+	{
+		$code = str_replace($key,$value,$code);
+	}
 }
 
+//decoding variable names
+if($varEncryptStatus ==1){
+	
+}
+echo "<hr>";
 print_r($code);
+echo "<hr>";
 
 /* ***************************************** */
 /* bundle of functions engaged in this script*/
@@ -69,7 +83,6 @@ function commentDecoder($value,$secretWord)
 	$replacer = '\1';
 	$value = preg_replace($pattern,$replacer,$value);
 	$value = base64_decode($value);
-	var_dump($value);
 	$mc_d = mcrypt_module_open(MCRYPT_BLOWFISH,'',MCRYPT_MODE_CFB,'');
 	$iv_size = mcrypt_enc_get_iv_size($mc_d);
 	$iv = substr($value,0,$iv_size);
@@ -85,7 +98,6 @@ function commentDecoder($value,$secretWord)
 function prefixDecoder($secretWord)
 {
 	$prefixArray = str_split($secretWord);
-	print_r($prefixArray);
 	$count = count($prefixArray)-1;
 	include '../../Encryptors/LetterDescriptor.php';
 	for($cycle=0; $cycle<=$count; $cycle++)
@@ -99,7 +111,6 @@ function prefixDecoder($secretWord)
 		}
 	}
 	$prefix = 'func'.implode('',$prefixArray);
-	var_dump($prefix);
 	return $prefix;
 }
 
@@ -107,7 +118,6 @@ function prefixDecoder($secretWord)
 function suffixDecoder($secretWord)
 {
 	$suffixArray = str_split($secretWord);
-	print_r($suffixArray);
 	$count = count($suffixArray)-1;
 	include '../../Encryptors/LetterDescriptor.php';
 	for($cycle=0; $cycle<=$count; $cycle++)
@@ -121,37 +131,41 @@ function suffixDecoder($secretWord)
 		}
 	}
 	$suffix = strrev(implode('',$suffixArray));
-	var_dump($suffix);
 	return $suffix;
 }
+
+/* ************************************* */
 
 //function that creates array codedFullFuncName=>decodedCoreFuncName
 function functionDecoder(array $oldFuncName)
 {
-	foreach ($oldFuncName as $key => $value)
+	foreach ($oldFuncName as $CodedFullName => $codedCoreName)
 	{
-		$oldCore = str_split($value);
-		$count = count($oldCore)-1;
+		$codedCore = str_split($codedCoreName);
+		$count = count($codedCore)-1;
 		for ($cycle=0;$cycle<=$count;$cycle++)
 		{
-			$letter[] = letterCoreDecoder($oldCore[$cycle]);
+			$decodedCore[] = letterCoreDecoder($codedCore[$cycle]);
 		}
+		$decodedCoreName = implode('',$decodedCore);
+		$newFuncName[$CodedFullName] = $decodedCoreName;
+		unset($decodedCore);
 	}
-	print_r($letter);
+	return $newFuncName;
 }
 
 function letterCoreDecoder($letter)
 {
 	include '../../Encryptors/LetterDescriptor.php';
-	$count = count($descriptor)-1;
-	for($cycle = 0; $cycle <= $count; $cycle++)
+	foreach ($descriptor as $key => $oldValue)
 	{
-		if($letter == $descriptor[$cycle]){
-			$letter = $cycle;
-			continue;
+		$pattern = "/{$letter}/";
+		$text = "{$key}";
+		if(preg_match($pattern,$text)){
+			$newValue = $oldValue;
 		}
 	}
-	return $letter;
+	return $newValue;
 }
 
 
