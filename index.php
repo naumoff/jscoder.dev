@@ -1,6 +1,5 @@
 <?php session_start() ?>
 <?php $status = $_SESSION['complete'];?>
-<?php echo "status now is ".$status; ?>
 
 <!DOCTYPE html>
 <html lang="ru">
