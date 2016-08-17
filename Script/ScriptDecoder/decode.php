@@ -122,10 +122,9 @@ foreach ($code as $string)
 	fwrite($handle,$string);
 }
 
-echo "<hr>";
-print_r($code);
-echo "<hr>";
-
+$_SESSION['complete'] = 2;
+header('Location: ../../index.php');
+exit;
 
 /* ***************************************** */
 /* bundle of functions engaged in this script*/
@@ -157,10 +156,10 @@ function prefixDecoder($secretWord,$mode)
 	include '../../Encryptors/LetterDescriptor.php';
 	for($cycle=0; $cycle<=$count; $cycle++)
 	{
+		$pattern = "/{$prefixArray[$cycle]}/";
 		foreach ($prefixDescriptor as $key => $value)
 		{
-			$pattern = "/{$prefixArray[$cycle]}/";
-			if(preg_match($pattern,$value)==1){
+			if(preg_match($pattern,$value)){
 				$prefixArray{$cycle} = $key;
 			}
 		}
@@ -182,10 +181,10 @@ function suffixDecoder($secretWord)
 	include '../../Encryptors/LetterDescriptor.php';
 	for($cycle=0; $cycle<=$count; $cycle++)
 	{
+		$pattern = "/{$suffixArray[$cycle]}/";
 		foreach ($suffixDescriptor as $key => $value)
 		{
-			$pattern = "/{$suffixArray[$cycle]}/";
-			if(preg_match($pattern,$value)==1){
+			if(preg_match($pattern,$value)){
 				$suffixArray{$cycle} = $key;
 			}
 		}

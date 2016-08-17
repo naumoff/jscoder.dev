@@ -170,9 +170,10 @@ function coderName($value)
 function prefixName($value)
 {
 	include '../../Encryptors/LetterDescriptor.php';
+	$pattern = "/{$value}/";
 	foreach ($prefixDescriptor as $key=>$oldValue)
 	{
-		if($value == $oldValue){
+		if(preg_match($pattern,$oldValue)){
 			$value = $key;
 		}
 	}
@@ -183,9 +184,10 @@ function prefixName($value)
 function suffixName($value)
 {
 	include '../../Encryptors/LetterDescriptor.php';
+	$pattern = "/{$value}/";
 	foreach ($suffixDescriptor as $key=>$oldValue)
 	{
-		if($value == $oldValue){
+		if(preg_match($pattern,$oldValue)){
 			$value = $key;
 		}
 	}
