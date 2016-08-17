@@ -33,7 +33,8 @@ echo "<hr>";
 // decoding function names
 if($funcEncryptStatus == 1){
 	//retrieved coded prefix of funcName
-	$prefix = prefixDecoder($secretWord);
+	$mode = 1; // this mode ads 'func' word before prefix
+	$prefix = prefixDecoder($secretWord,$mode);
 	print_r($prefix."\n");
 	
 	//retrieved coded suffix of funcName
@@ -54,7 +55,7 @@ if($funcEncryptStatus == 1){
 	print_r($oldFuncName);
 	
 	//retrieved array codedFullFuncName=>decodedCoreFuncName
-	$decodedFuncNameArray = functionDecoder($oldFuncName);
+	$decodedFuncNameArray = Decoder($oldFuncName);
 	print_r($decodedFuncNameArray);
 	
 	//replaced in $code old coded funcNames to decoded funcNames
@@ -66,11 +67,65 @@ if($funcEncryptStatus == 1){
 
 //decoding variable names
 if($varEncryptStatus ==1){
+	//to avoid duplicate code suffixDecoder used for variable prefixes
+	$prefixVar = 'vardom'.strrev(suffixDecoder($secretWord));
+	print_r($prefixVar."\n");
 	
+	//to avoid duplicate code prefixDecoder used for variable suffixes
+	$mode = 0; // this mode abolishes 'func' word adding and does strrev()
+	$suffixVar = prefixDecoder($secretWord,$mode);
+	print_r($suffixVar."\n");
+	
+	//created array fullCodedVariableName=>coreCodedVariableName
+	$pattern = "/{$prefixVar}(?P<varCore>.+?){$suffixVar}/";
+	preg_match_all($pattern,$code,$matches);
+	$matches = array_unique($matches['varCore']);
+	print_r($matches);
+	foreach ($matches as $value)
+	{
+		$codedVarArray[$prefixVar.$value.$suffixVar] = $value;
+	}
+	print_r($codedVarArray);
+	
+	//create array fullCodedVariableName=>coreDecodedVariableName
+	$decodedVariableNameArray = Decoder($codedVarArray);
+	print_r($decodedVariableNameArray);
+	
+	//replaced old coded variable names with decoded names
+	foreach ($decodedVariableNameArray as $key=>$value)
+	{
+		$code = str_replace($key,$value,$code);
+	}
 }
+
+//removed fake data from script
+if($fakeInsertStatus == 1){
+	$code = fakeDataRemoval($code);
+	//removed duplicate ';;'
+	$pattern = '/;[;]+/';
+	$replacer = ';';
+	$code = preg_replace($pattern,$replacer,$code);
+}
+
+//split one string into lines
+$code = str_replace(';',';PHP_EOL',$code);
+$code = str_replace('*/','*/PHP_EOL',$code);
+$code = str_replace('{ ','{PHP_EOL ',$code);
+$code = explode('PHP_EOL',$code);
+
+//create new JS file with decoded content
+$decodedFilePath = '../../Data/JS-decoded/js_decoded.js';
+$handle = fopen($decodedFilePath,'w');
+foreach ($code as $string)
+{
+	$string = $string."\n";
+	fwrite($handle,$string);
+}
+
 echo "<hr>";
 print_r($code);
 echo "<hr>";
+
 
 /* ***************************************** */
 /* bundle of functions engaged in this script*/
@@ -95,7 +150,7 @@ function commentDecoder($value,$secretWord)
 }
 
 // function that detects prefix of coded function
-function prefixDecoder($secretWord)
+function prefixDecoder($secretWord,$mode)
 {
 	$prefixArray = str_split($secretWord);
 	$count = count($prefixArray)-1;
@@ -110,7 +165,12 @@ function prefixDecoder($secretWord)
 			}
 		}
 	}
-	$prefix = 'func'.implode('',$prefixArray);
+	if($mode==1){
+		$prefix = 'func'.implode('',$prefixArray);
+	}elseif($mode==0){
+		$prefix = strrev(implode('',$prefixArray));
+	}
+
 	return $prefix;
 }
 
@@ -134,10 +194,8 @@ function suffixDecoder($secretWord)
 	return $suffix;
 }
 
-/* ************************************* */
-
 //function that creates array codedFullFuncName=>decodedCoreFuncName
-function functionDecoder(array $oldFuncName)
+function Decoder(array $oldFuncName)
 {
 	foreach ($oldFuncName as $CodedFullName => $codedCoreName)
 	{
@@ -168,6 +226,17 @@ function letterCoreDecoder($letter)
 	return $newValue;
 }
 
+//function that removes fake data from script
+function fakeDataRemoval($code)
+{
+	include '../../Encryptors/JS-functions.php';
+	foreach ($fakeFunc as $value)
+	{
+		print_r($value."\n");
+		$code = str_replace($value,'',$code);
+	}
+	return $code;
+}
 
 ?>
 </pre>

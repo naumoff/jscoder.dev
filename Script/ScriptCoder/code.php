@@ -35,7 +35,9 @@ $_SESSION['complete'] = 1;
 header('Location: ../../index.php');
 exit;
 
+/*********************************/
 /* functions to code existing JS */
+/*********************************/
 
 //function that transform comments into one format - /* comment */
 function changeComments(&$string)
