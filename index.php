@@ -1,7 +1,6 @@
 <?php session_start() ?>
 <?php $status = $_SESSION['complete'];?>
 <?php $failedStatus = $_SESSION['FailedStatus']; ?>
-<?php print_r($failedStatus); ?>
 
 <!DOCTYPE html>
 <html lang="ru">
@@ -46,7 +45,7 @@
 		echo "</pre>";
 	}
 ?>
-<?php if($status == NULL || $status ==2) :?>
+<?php if($status == NULL || $status == 2) :?>
 	<form action="/Script/ScriptDecoder/upload.php" method="post" enctype="multipart/form-data">
 		<fieldset>
 			<legend>JS decoder form</legend>
@@ -61,7 +60,7 @@
 <?php endif; ?>
 
 <?php
-if($status == 2){
+if($status == 2 && $failedStatus == NULL){
 	$file = 'Data/JS-decoded/js_decoded.js';
 	$handle = fopen($file,'r');
 	$code = fread($handle,filesize($file));
@@ -73,6 +72,13 @@ if($status == 2){
 	echo "<a href='Tester/checkerForCoded.php' target='_blank'>Check your script</a>";
 	echo "<h2>Your code is:</h2>";
 	print_r($code);
+}
+if($failedStatus == 2 && $status == 2){
+	echo "<pre>";
+	echo"<h2>{$_SESSION['Title']}</h2>";
+	echo $_SESSION['WordErr'];
+	echo $_SESSION['LoadErr'];
+	echo "</pre>";
 }
 ?>
 

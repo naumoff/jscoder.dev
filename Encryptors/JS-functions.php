@@ -1,5 +1,5 @@
 <?php
-// please put one space before and after fake function in array
+// please put one space before after fake function in array
 $fakeFunc = [
 	' function 123NK567(12z654,12x654,12y654 = 0){ var 12z654 = 0; var 12x654 = 15; 12y654++; return 12y654; }',
 	' function 2142NK34(vard,z12){ var vard; var z12 = vard; return z12; }',

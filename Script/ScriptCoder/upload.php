@@ -1,6 +1,5 @@
 <?php
 session_start();
-
 // variables:
 $fileSize = $_FILES['js_load']['size'];
 $fileExt = $_FILES['js_load']['type'];
@@ -41,6 +40,7 @@ IF($_SERVER['REQUEST_METHOD']=='POST'){
 	}
 }
 
+// coding form validation
 IF($loadStatus == FALSE){
 	$_SESSION['FailedStatus'] = 1;
 	$_SESSION['complete'] = 1;
