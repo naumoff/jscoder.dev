@@ -1,5 +1,7 @@
 <?php session_start() ?>
 <?php $status = $_SESSION['complete'];?>
+<?php $failedStatus = $_SESSION['FailedStatus']; ?>
+<?php print_r($failedStatus); ?>
 
 <!DOCTYPE html>
 <html lang="ru">
@@ -20,13 +22,10 @@
 			<input type="submit" name="upload_button" value = "upload">
 		</fieldset>
 	</form>
-	<h2><?php echo $_SESSION['Title']; ?></h2>
-	<b><?php echo $_SESSION['WordErr']; ?></b>
-	<b><?php echo $_SESSION['LoadErr']; ?></b>
-	<b><?php echo $code ?></b>
 <?php endif; ?>
 
-<?php if($status == 1){
+<?php
+	if($status == 1 && $failedStatus == NULL){
 		$file = 'Data/JS-new/js_new.js';
 		$handle = fopen($file,'r');
 		$code = fread($handle,filesize($file));
@@ -38,6 +37,13 @@
 		echo "<a href='Tester/checkerForCoded.php' target='_blank'>Check your script</a>";
 		echo "<h2>Your code is:</h2>";
 		print_r($code);
+	}
+	if($failedStatus == 1 && $status == 1){
+		echo "<pre>";
+		echo"<h2>{$_SESSION['Title']}</h2>";
+		echo $_SESSION['WordErr'];
+		echo $_SESSION['LoadErr'];
+		echo "</pre>";
 	}
 ?>
 <?php if($status == NULL || $status ==2) :?>
@@ -54,7 +60,8 @@
 	</form>
 <?php endif; ?>
 
-<?php if($status == 2){
+<?php
+if($status == 2){
 	$file = 'Data/JS-decoded/js_decoded.js';
 	$handle = fopen($file,'r');
 	$code = fread($handle,filesize($file));
