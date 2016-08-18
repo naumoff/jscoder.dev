@@ -10,7 +10,7 @@
 </head>
 <body>
 <?php if($status == null || $status == 1): ?>
-	<form action="/Script/ScriptCoder/upload.php" method="post" enctype="multipart/form-data">
+	<form action="./Script/ScriptCoder/upload.php" method="post" enctype="multipart/form-data">
 		<fieldset>
 			<legend>JS coder form</legend>
 			<input type="text" name="secret_word" placeholder="letters and numbers only"> Encryption key<br>
@@ -46,7 +46,7 @@
 	}
 ?>
 <?php if($status == NULL || $status == 2) :?>
-	<form action="/Script/ScriptDecoder/upload.php" method="post" enctype="multipart/form-data">
+	<form action="./Script/ScriptDecoder/upload.php" method="post" enctype="multipart/form-data">
 		<fieldset>
 			<legend>JS decoder form</legend>
 			<input type="text" name="secret_word" placeholder="letters and numbers only"> Encryption key<br>
@@ -85,6 +85,5 @@ if($failedStatus == 2 && $status == 2){
 </body>
 </html>
 <?php
-$_SESSION = [];
 session_destroy();
 ?>
